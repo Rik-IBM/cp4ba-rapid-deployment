@@ -20,20 +20,20 @@ echo "  Reading 05-parametersForCp4ba.sh ..."
 # --- Provide those BEFORE running script 06-prepareCp4baDeployment.sh ---
 
 # OCP project name for CP4BA, for example ibm-cp4ba - make sure to use the same value as used before when running script cp4a-clusteradmin-setup.sh
-cp4baProjectName=REQUIRED
+cp4baProjectName=ibm-cp4ba
 
 # TLS secret name - see also secret name in project ibm-cert-store
 #   If this secret is not available, leave empty (but remove the value 'REQUIRED') - then self-signed certificates will be used at the routes
-cp4baTlsSecretName=REQUIRED
+cp4baTlsSecretName=
 
 # Password for CP4BA Admin User (cp4baAdminName name see below), for example passw0rd - see ldif file you applied to LDAP
-cp4baAdminPassword=REQUIRED
+cp4baAdminPassword=passw0rd
 
 # Password for LDAP Admin User (ldapAdminName name see below), for example passw0rd - use the password that you specified when setting up LDAP
-ldapAdminPassword=REQUIRED
+ldapAdminPassword=passw0rd
 
 # LDAP instance access information - hostname or IP
-ldapServer="REQUIRED"
+ldapServer="52.117.94.174"
 
 
 
@@ -78,13 +78,13 @@ ldapTdsUserFilter="(\&(cn=%v)(objectclass=person))"
 ldapTdsGroupFilter="(\&(cn=%v)(\|(objectclass=groupofnames)(objectclass=groupofuniquenames)(objectclass=groupofurls)))"
 
 # --- Storage Class Settings ---
-cp4baScSlow=cp4a-file-delete-bronze-gid
-cp4baScMedium=cp4a-file-delete-silver-gid
-cp4baScFast=cp4a-file-delete-gold-gid
-cp4baBlockScFast=ibmc-block-gold
+cp4baScSlow=ocs-storagecluster-cephfs
+cp4baScMedium=ocs-storagecluster-cephfs
+cp4baScFast=ocs-storagecluster-cephfs
+cp4baBlockScFast=ocs-storagecluster-cephfs
 
 # --- HA Settings ---
-cp4baReplicaCount=1
+cp4baReplicaCount=2
 cp4baBaiJobParallelism=1
 
 

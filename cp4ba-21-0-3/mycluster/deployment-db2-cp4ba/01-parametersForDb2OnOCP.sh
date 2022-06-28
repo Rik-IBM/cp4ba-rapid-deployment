@@ -27,27 +27,28 @@ echo "  Reading 01-parametersForDb2OnOCP.sh ..."
 cp4baTemplateToUse=ibm_cp4a_cr_template.002.ent.FoundationContent.yaml
 
 # OCP Project Name for DB2, for example ibm-db2
-db2OnOcpProjectName=REQUIRED
+db2OnOcpProjectName=ibm-db2
 
 # Password for DB2 Admin User (Admin User name see below), for example passw0rd
-db2AdminUserPassword=REQUIRED
+db2AdminUserPassword=passw0rd
 
 # DB2 Standard license key base64 encoded
 #   If this key is not available, leave empty (but remove the value 'REQUIRED') - then the Community edition is used that allows less CPU & RAM
 #   In that case, also update parameters db2Cpu and db2Memory below (the defaults there assume you have a DB2 Standard license available)
-db2StandardLicenseKey=REQUIRED
+#db2StandardLicenseKey=W0xpY2Vuc2VDZXJ0aWZpY2F0ZV0KQ2hlY2tTdW09Q0FBODlCOTA0QzU3RTY2OTU1RjJDQTY4MzlCRTZCOTMKVGltZVN0YW1wPTE1NjU3MjM5MDIKUGFzc3dvcmRWZXJzaW9uPTQKVmVuZG9yTmFtZT1JQk0gVG9yb250byBMYWIKVmVuZG9yUGFzc3dvcmQ9N3Y4cDRmcTJkdGZwYwpWZW5kb3JJRD01ZmJlZTBlZTZmZWIuMDIuMDkuMTUuMGYuNDguMDAuMDAuMDAKUHJvZHVjdE5hbWU9REIyIFN0YW5kYXJkIEVkaXRpb24KUHJvZHVjdElEPTE0MDUKUHJvZHVjdFZlcnNpb249MTEuNQpQcm9kdWN0UGFzc3dvcmQ9MzR2cnc1MmQyYmQyNGd0NWFmNHU4Y2M0ClByb2R1Y3RBbm5vdGF0aW9uPTEyNyAxNDMgMjU1IDI1NSA5NCAyNTUgMSAwIDAgMC0yNzsjMCAxMjggMTYgMCAwCkFkZGl0aW9uYWxMaWNlbnNlRGF0YT0KTGljZW5zZVN0eWxlPW5vZGVsb2NrZWQKTGljZW5zZVN0YXJ0RGF0ZT0wOC8xMy8yMDE5CkxpY2Vuc2VEdXJhdGlvbj02NzE2CkxpY2Vuc2VFbmREYXRlPTEyLzMxLzIwMzcKTGljZW5zZUNvdW50PTEKTXVsdGlVc2VSdWxlcz0KUmVnaXN0cmF0aW9uTGV2ZWw9MwpUcnlBbmRCdXk9Tm8KU29mdFN0b3A9Tm8KQnVuZGxlPU5vCkN1c3RvbUF0dHJpYnV0ZTE9Tm8KQ3VzdG9tQXR0cmlidXRlMj1ObwpDdXN0b21BdHRyaWJ1dGUzPU5vClN1YkNhcGFjaXR5RWxpZ2libGVQcm9kdWN0PU5vClRhcmdldFR5cGU9QU5ZClRhcmdldFR5cGVOYW1lPU9wZW4gVGFyZ2V0ClRhcmdldElEPUFOWQpFeHRlbmRlZFRhcmdldFR5cGU9CkV4dGVuZGVkVGFyZ2V0SUQ9ClNlcmlhbE51bWJlcj0KVXBncmFkZT1ObwpJbnN0YWxsUHJvZ3JhbT0KQ2FwYWNpdHlUeXBlPQpNYXhPZmZsaW5lUGVyaW9kPQpEZXJpdmVkTGljZW5zZVN0eWxlPQpEZXJpdmVkTGljZW5zZVN0YXJ0RGF0ZT0KRGVyaXZlZExpY2Vuc2VFbmREYXRlPQpEZXJpdmVkTGljZW5zZUFnZ3JlZ2F0ZUR1cmF0aW9uPQo=
+db2StandardLicenseKey=
 
 # CPUs to assign to DB2 pod (max with DB2 Standard license is 16, max with Community edition is 4)
 #   If you selected CP4BA template     ibm_cp4a_cr_template.001.ent.Foundation.yaml                      set it to 4
 #   If you selected CP4BA template     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml               set it to 4
 #   If you selected CP4BA template     ibm_cp4a_cr_template.200.ent.ClientOnboardingDemoWithADP.yaml     set it to 16
-db2Cpu=4
+db2Cpu=16
 
 # RAM to assign to DB2 pod (max with DB2 Standard license is 128Gi, max with Community edition is 16Gi)
 #   If you selected CP4BA template     ibm_cp4a_cr_template.001.ent.Foundation.yaml                      set it to 16Gi
 #   If you selected CP4BA template     ibm_cp4a_cr_template.002.ent.FoundationContent.yaml               set it to 16Gi
 #   If you selected CP4BA template     ibm_cp4a_cr_template.200.ent.ClientOnboardingDemoWithADP.yaml     set it to 110Gi
-db2Memory=16Gi
+db2Memory=110Gi
 
 
 
@@ -58,14 +59,14 @@ db2Memory=16Gi
 # --- If changes are needed here, provide those BEFORE running script 02-createDb2OnOCP.sh ---
 
 # Version of DB2 operator to install. Change only when a new operator version should be used.
-db2OperatorVersion=db2u-operator.v1.1.9
+db2OperatorVersion=db2u-operator.v1.1.13
 
 # Channel version for Operator updates. Change only if a new DB2 operator version requires a new channel version.
 db2OperatorChannel=v1.1
 
 # DB2 instance version to be created. Change only when a new version of DB2 should be used.  
 # This version of DB2 must be supported by the Operator version installed as specified above.
-db2InstanceVersion=11.5.6.0
+db2InstanceVersion=11.5.7.0-cn4
 
 # Indicate if to install DB2 containerized on the OpenShift cluster (true/false)
 db2UseOnOcp=true
@@ -86,13 +87,13 @@ db2HostIp=$db2HostName
 db2AdminUserName=db2inst1
 
 # Deployment platform, either ROKS or OCP
-cp4baDeploymentPlatform=ROKS
+cp4baDeploymentPlatform=OCP
 
 # Name of the storage class used for DB2's PVC
-db2OnOcpStorageClassName=cp4a-file-delete-gold-gid
+db2OnOcpStorageClassName=ocs-storagecluster-cephfs
 
 # Size of the PVC for DB2 (on ROKS: the larger the faster, good performance with 500Gi)
-db2StorageSize=150Gi
+db2StorageSize=500Gi
 
 # Database activation delay. Scripts will wait this time in seconds between activating databases.
 # With problems on activation, or if on slow environments, try to increase this delay
@@ -143,7 +144,7 @@ adpDb2HostName=$db2HostName
 db2CaBasedbName=BASECA
 # All tenant DBs will be created using this prexi
 db2TenantDBPrefix=PDB
-numberTenantDBs=6
+numberTenantDBs=3
 
 # --- end of file ---
 

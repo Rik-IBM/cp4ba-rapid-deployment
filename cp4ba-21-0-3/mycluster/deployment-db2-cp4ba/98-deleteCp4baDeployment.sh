@@ -123,12 +123,107 @@ echo
 echo "Deleting the secrets..."
 oc delete -f secrets.yaml
 oc delete -f tlsSecrets.yaml
+oc delete secret rpa-secret
 oc delete -f adp-aca-basedb-secret.yaml
+oc delete secret github-cert
 sleep 60
 
 echo
 echo "Deleting the operator pod (will be re-created automatically)..."
 oc get pods | grep ibm-cp4a-operator- | awk '$1 {print$1}' | while read vol; do oc delete pod/${vol}; done
+
+echo
+printf "Do you want to also cleanup all prerequisites (IAF, ZEN, ibm-common-services, ...)? You only should do this if there is no other component deployed that still needs those prerequisites (Yes/No, default: No): "
+read -rp "" ans
+case "$ans" in
+"y"|"Y"|"yes"|"Yes"|"YES")
+    echo
+    echo -e "Cleaning up all prerequisites..."
+    ;;
+*)
+    echo
+    echo -e "Exiting without cleaning up all prerequisites..."
+    echo
+    exit 0
+    ;;
+esac
+
+echo
+echo "Deleting PVC from project ibm-common-services..."
+oc project ibm-common-services
+oc delete pvc mongodbdir-icp-mongodb-0
+oc project $cp4baProjectName
+
+echo
+echo "Deleting all prerequisites..."
+# deleting prerequisites according to https://www.ibm.com/docs/en/cloud-paks/1.0?topic=foundation-uninstalling
+oc delete AutomationUIConfig iaf-system
+
+oc -n ibm-common-services get csv -o name --ignore-not-found | grep 'ibmcloud-operator' | xargs oc -n ibm-common-services delete  
+oc -n ibm-common-services get installplans | grep 'ibmcloud-operator' | awk '{print $1}' | xargs oc -n ibm-common-services delete installplan
+oc -n default delete secrets ibmcloud-operator-secret ibmcloud-operator-tokens --ignore-not-found
+oc -n default delete configmaps ibmcloud-operator-defaults --ignore-not-found
+oc get crd --no-headers | grep -i "ibmcloud" | awk '{print $1}' | xargs -r oc delete crd
+
+oc patch -n $cp4baProjectName rolebinding/admin -p '{"metadata": {"finalizers":null}}'
+oc patch -n $cp4baProjectName rolebinding/edit -p '{"metadata": {"finalizers":null}}'
+oc patch -n $cp4baProjectName rolebinding/view -p '{"metadata": {"finalizers":null}}'
+oc delete rolebinding admin -n $cp4baProjectName --ignore-not-found
+oc delete rolebinding edit -n $cp4baProjectName --ignore-not-found
+oc delete rolebinding view -n $cp4baProjectName --ignore-not-found
+oc patch -n ibm-common-services rolebinding/admin -p '{"metadata": {"finalizers":null}}'
+oc patch -n ibm-common-services rolebinding/edit -p '{"metadata": {"finalizers":null}}'
+oc patch -n ibm-common-services rolebinding/view -p '{"metadata": {"finalizers":null}}'
+oc delete rolebinding admin -n ibm-common-services --ignore-not-found
+oc delete rolebinding edit -n ibm-common-services --ignore-not-found
+oc delete rolebinding view -n ibm-common-services --ignore-not-found
+
+oc delete operandrequest --all -n $cp4baProjectName
+oc delete operandbindinfo --all -n ibm-common-services
+oc delete operandrequest --all -n ibm-common-services
+oc delete namespacescope --all -n ibm-common-services
+oc patch operandbindinfo ibm-licensing-bindinfo --type="json" -p '[{"op": "remove", "path":"/metadata/finalizers"}]' -n ibm-common-services
+
+oc delete subscription --all -n $cp4baProjectName
+oc delete csv --all -n $cp4baProjectName
+
+oc delete subscription --all -n ibm-common-services
+oc delete csv --all -n ibm-common-services
+
+oc delete deployment --all -n $cp4baProjectName
+oc delete services --all -n $cp4baProjectName
+
+oc delete deployment --all -n ibm-common-services
+oc delete services --all -n ibm-common-services
+
+oc delete og ibm-cp4a-operator-catalog-group -n $cp4baProjectName
+oc delete og ibm-common-services-operators -n ibm-common-services
+
+oc delete --ignore-not-found $(oc get crd -o name | grep "automation.ibm.com" || echo "crd no-automation-ibm")
+
+oc delete apiservice v1beta1.webhook.certmanager.k8s.io
+oc delete apiservice v1.metering.ibm.com
+
+echo
+printf "Do you want to also delete projects ${cp4baProjectName} and ibm-common-services (Yes/No, default: No): "
+read -rp "" ans
+case "$ans" in
+"y"|"Y"|"yes"|"Yes"|"YES")
+    echo
+    echo -e "Deleting projects..."
+    ;;
+*)
+    echo
+    echo -e "Exiting without deleting projects..."
+    echo
+    exit 0
+    ;;
+esac
+
+echo
+oc project default
+oc delete project $cp4baProjectName
+oc delete project ibm-common-services
 
 echo
 echo "Done. Exiting..."

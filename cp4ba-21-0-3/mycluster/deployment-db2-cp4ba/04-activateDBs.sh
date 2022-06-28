@@ -61,15 +61,11 @@ echo "Switching to project ${db2OnOcpProjectName}..."
 oc project ${db2OnOcpProjectName}
 
 echo
-echo "Restarting DB2 instance."
-oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system disable"
-sleep 30 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2stop"
-sleep 30 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -c db2u -- su - $db2AdminUserName -c "db2start"
-sleep 30 #let DB2 settle down
-oc exec c-db2ucluster-db2u-0 -it -c db2u -- su -c "sudo wvcli system enable"
-sleep 30 #let DB2 settle down
+echo "Restarting Db2..."
+oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2stop"
+sleep 5
+oc exec -c db2u c-db2ucluster-db2u-0 -it -- su - $db2AdminUserName -c "db2start"
+sleep 5
 
 echo
 echo "Activating databases..."

@@ -37,7 +37,7 @@ spec:
     external_tls_certificate_secret: tlsSecretName
 
     sc_deployment_patterns: "foundation,content"
-    sc_optional_components: "css,cmis"
+    sc_optional_components: "css,cmis,bai"
 
     sc_deployment_context: "CP4A"
     sc_deployment_type: "Production"
@@ -550,3 +550,172 @@ spec:
           oc_cpe_obj_store_basic_user_groups:
             - "cp4baUsersGroup"
           oc_cpe_obj_store_enable_content_event_emitter: false
+
+  ##############################################################################
+  ########      IBM Business Automation Insights (BAI) configuration    ########
+  ##############################################################################
+  bai_configuration:
+#    templating_debug: true
+    persistence:
+      useDynamicProvisioning: true
+#    bai_secret: ""
+    image_credentials:
+      registry: cp.icr.io/cp/cp4a
+    image_pull_policy: "IfNotPresent"
+    sc_deployment_license: "production"
+
+    kafka:
+      auto_offset_reset: "latest"
+#      properties_config_map: ""
+      socket_timeout_ms: 10000
+
+    settings:
+      egress: true
+      hdfs: false
+      ingress_topic: "icp4ba-bai-ingress"
+      egress_topic: "icp4ba-bai-egress"
+      service_topic: "icp4ba-bai-service"
+
+    setup:
+      backoff_limit: 6
+      resources:
+        requests:
+          memory: "50Mi"
+          cpu: "200m"
+        limits:
+          memory: "120Mi"
+      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
+
+    admin:
+#      service_type: NodePort
+#      external_port: 
+#      hostname: "admin.bai.{{ shared_configuration.sc_deployment_hostname_suffix }}"
+      replicas: cp4baReplicaCount
+#      username: admin
+#      password: passw0rd
+#      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
+#      external_tls_secret_name: "{{ meta.name }}-bai-admin-external-tls-secret"
+#      external_tls_ca_secret_name: 
+
+    management:
+#      hostname: "management.bai.{{ shared_configuration.sc_deployment_hostname_suffix }}"
+      replicas: cp4baReplicaCount
+#      external_tls_secret_name: "{{ meta.name }}-bai-management-external-tls-secret"
+#      external_tls_ca_secret_name: ""
+
+    flink_pv:
+      capacity: "20Gi"
+      storage_class_name: "{{ shared_configuration.storage_configuration.sc_medium_file_storage_classname }}"
+#      existing_claim_name: ""
+
+    flink:
+      log_level: 'warning'
+      task_manager_memory: 1728mb
+      task_manager_cpu: 1
+      job_manager_memory: 1728mb
+      job_checkpointing_interval: 5000
+      elasticsearch_flush_interval_ms: -1
+#      rocks_db_properties_config_map: ""
+      batch_size: 268435456
+      check_interval: 300000
+      bucket_threshold: 900000
+#      storage_bucket_url: ""
+#      hadoop_user: bai
+      init_storage_directory: true
+      create_route: true
+
+    ingestion:
+      install: false
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+
+    bpmn:
+      install: true
+      image:
+        repository: cp.icr.io/cp/cp4a/bai/bai-bpmn
+        tag: 21.0.3-IF005
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+      end_aggregation_delay: 10000
+      force_elasticsearch_timeseries: true
+
+    bawadv:
+      install: false
+      image:
+        repository: cp.icr.io/cp/cp4a/bai/bai-bawadv
+        tag: 21.0.3-IF005
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+
+    icm:
+      install: true
+      image:
+        repository: cp.icr.io/cp/cp4a/bai/bai-icm
+        tag: 21.0.3-IF005
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+
+    odm:
+      install: false
+      image:
+        repository: cp.icr.io/cp/cp4a/bai/bai-odm
+        tag: 21.0.3-IF005
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+
+    content:
+      install: true
+      image:
+        repository: cp.icr.io/cp/cp4a/bai/bai-content
+        tag: 21.0.3-IF005
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+
+    event_forwarder:
+#      image:
+#        repository: cp.icr.io/cp/cp4a/bai/bai-event-forwarder
+#        tag: 21.0.3-IF005
+#      recovery_path: ""
+      parallelism: cp4baBaiJobParallelism
+#      configurations:
+#        - kafka_topic: ""
+#          elasticsearch_index: ""
+#          hdfs_bucket: ""
+
+#    kerberos:
+#      enabled_for_hdfs: false
+#      realm: ""
+#      kdc: ""
+#      principal: ""
+#      keytab: ""
+
+    init_image:
+      image:
+        repository: cp.icr.io/cp/cp4a/bai/bai-init
+        tag: 21.0.3-IF005
+
+    business_performance_center:
+      install: true
+#      config_secret_name: ""
+#      external_port: 9443
+      replicas: cp4baReplicaCount
+#      oidc:
+#        host: ""
+#        external_host: ""
+#        issuer_host: ""
+#        port: 443
+#      teamserver_host: ""
+#      scim_host: ""
+#      admin_team: ""
+      all_users_access: true
+#      redirect_uris: ""
+#      logout_redirect_uris: ""
+#      run_as_user: "{{ shared_configuration.sc_run_as_user }}"
+#      hostname: "business-performance-center-bai-{{ shared_configuration.sc_deployment_hostname_suffix }}"
+      resources:
+        limits:
+          memory: "2Gi"
+          cpu: "2000m"
+#      auto_plugin: true
+      external_tls_secret_name: tlsSecretName
+#      external_tls_ca_secret_name: ""
