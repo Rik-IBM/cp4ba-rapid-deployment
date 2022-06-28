@@ -1,0 +1,65 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/GPU: '0'
+    machine.openshift.io/memoryMb: '131072'
+    machine.openshift.io/vCPU: '32'
+  name: itzocp-661002q71v-nvc-mld66-worker-eastus4
+  generation: 1
+  namespace: openshift-machine-api
+  labels:
+    machine.openshift.io/cluster-api-cluster: itzocp-661002q71v-nvc-mld66
+    machine.openshift.io/cluster-api-machine-role: worker
+    machine.openshift.io/cluster-api-machine-type: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: itzocp-661002q71v-nvc-mld66
+      machine.openshift.io/cluster-api-machineset: itzocp-661002q71v-nvc-mld66-worker-eastus4
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: itzocp-661002q71v-nvc-mld66
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: itzocp-661002q71v-nvc-mld66-worker-eastus4
+    spec:
+      metadata: {}
+      providerSpec:
+        value:
+          osDisk:
+            diskSizeGB: 1024
+            managedDisk:
+              storageAccountType: Premium_LRS
+            osType: Linux
+          networkResourceGroup: itzocp-661002q71v-nvc-mld66-rg
+          publicLoadBalancer: itzocp-661002q71v-nvc-mld66            
+          userDataSecret:
+            name: worker-user-data
+          vnet: itzocp-661002q71v-nvc-mld66-vnet
+          credentialsSecret:
+            name: azure-cloud-credentials
+            namespace: openshift-machine-api
+          zone: '3'
+          metadata:
+            creationTimestamp: null
+          publicIP: false
+          resourceGroup: itzocp-661002q71v-nvc-mld66-rg          
+          kind: AzureMachineProviderSpec
+          location: eastus
+          vmSize: Standard_D32s_v3
+          image:
+            offer: aro4
+            publisher: azureopenshift
+            resourceID: ''
+            sku: aro_49
+            version: 49.84.20211008
+          managedIdentity: itzocp-661002q71v-nvc-mld66-identity
+          subnet: itzocp-661002q71v-nvc-mld66-worker-subnet
+          apiVersion: azureproviderconfig.openshift.io/v1beta1
+      # taints:
+      #   - effect: NoSchedule
+      #     key: reserved
+      #     value: db2
