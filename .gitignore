@@ -1,1 +1,4 @@
 cp4ba-21-0-3/mycluster/deployment-db2-cp4ba/.DS_Store
+cp4ba-21-0-3/mycluster/deployment-db2-cp4ba/jdbc/db2/db2jcc4.jar
+cp4ba-21-0-3/mycluster/deployment-db2-cp4ba/jdbc/db2/db2jcc_license_cu.jar
+cp4ba-21-0-3/mycluster/deployment-db2-cp4ba/baca-db/DB2/imports/runtime_page.del.001.lob
