@@ -1,0 +1,48 @@
+###############################################################################
+#
+# Licensed Materials - Property of IBM
+#
+# (C) Copyright IBM Corp. 2022. All Rights Reserved.
+#
+# US Government Users Restricted Rights - Use, duplication or
+# disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+###############################################################################
+apiVersion: db2u.databases.ibm.com/v1
+kind: Db2uCluster
+metadata:
+  name: db2ucluster
+  namespace: ibm-db2
+spec:
+  size: 1
+  license:
+    accept: true
+  account:
+    imagePullSecrets:
+      - ibm-registry
+    privileged: true
+  environment:
+    dbType: db2oltp
+    instance:
+      password: passw0rd
+  version: 11.5.7.0-cn4
+  podConfig:
+    db2u:
+      resource:
+        db2u:
+          requests:
+            cpu: 16
+            memory: 110Gi
+          limits:
+            cpu: 16
+            memory: 110Gi
+  storage:
+    - name: share
+      type: create
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 500Gi
+        storageClassName: ocs-storagecluster-cephfs

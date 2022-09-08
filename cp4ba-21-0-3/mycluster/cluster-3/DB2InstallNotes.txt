@@ -1,0 +1,14 @@
+Existing databases are:
+ Database name                        = BLUDB
+
+Use this hostname/IP to access the databases e.g. with IBM Data Studio.
+Please also update in 01-parametersForDb2OnOCP.sh property "db2HostName" with this information (in Skytap, use the IP 10.0.0.10 instead)
+	Hostname: router-default.apps.kd7lfiqf.eastus.aroapp.io
+	Other possible addresses(If hostname not available above): itzaro-rm5fyd6-td79l-worker-eastus7-xcn56,10.0.2.11
+
+Use one of these NodePorts to access the databases e.g. with IBM Data Studio (usually the first one is for legacy-server (Db2 port 50000), the second for ssl-server (Db2 port 50001)).
+                "nodePort": 32573,
+                "nodePort": 31605,
+
+Use "db2inst1" and password "passw0rd" to access the databases e.g. with IBM Data Studio.
+

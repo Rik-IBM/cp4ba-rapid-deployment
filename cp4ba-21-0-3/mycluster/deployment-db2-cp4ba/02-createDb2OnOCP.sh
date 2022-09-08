@@ -269,7 +269,7 @@ fi
 
 echo
 echo "Patching c-db2ucluster-db2u statefulset."
-oc patch $statefulsetQualifiedName -n=$db2OnOcpProjectName -p='{"spec":{"template":{"spec":{"containers":[{"name":"db2u","tty":false}]}}}}}'
+oc patch $statefulsetQualifiedName -n=$db2OnOcpProjectName -p='{"spec":{"template":{"spec":{"containers":[{"name":"db2u","tty":false}]}}}}'
 
 ##
 ## Wait for  c-db2ucluster-restore-morph job to complte. If this job completes successfully
